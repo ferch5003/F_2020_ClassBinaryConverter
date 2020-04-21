@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:demo_app/widgets/binary_layout.dart';
+import 'package:demo_app/widgets/decimal_layout.dart';
+
+enum WidgetMarker { binary, decimal }
 
 class Converter extends StatefulWidget {
   @override
@@ -7,105 +11,126 @@ class Converter extends StatefulWidget {
 
 class _ConverterState extends State<Converter> {
   String _binary = "";
-  String _decimal =
-      "0"; // _decimal = int.parse(_binary, radix: 2).toRadixString(10);
+  String _decimal = "";
+  String text = "Binary -> Decimal";
+  WidgetMarker selectedWidgetMarker = WidgetMarker.binary;
 
-  void _onPressed(int k) {
+  void _binToDec(int k) {
     setState(() {
-      switch (k) {
-        case 0:
-          _binary = _binary + "0";
-          _decimal = int.parse(_binary, radix: 2).toRadixString(10);
-          break;
-        case 1:
-          _binary = _binary + "1";
-          _decimal = int.parse(_binary, radix: 2).toRadixString(10);
-          break;
-        case 2:
-          _binary = "";
-          _decimal = "0";
-          break;
-      }
+      _binary = _binary + k.toString();
+      _decimal = int.parse(_binary, radix: 2).toRadixString(10);
     });
+  }
+
+  void _decToBin(int k) {
+    setState(() {
+      _decimal = _decimal + k.toString();
+      _binary = int.parse(_decimal, radix: 10).toRadixString(2);
+    });
+  }
+
+  void _clear() {
+    setState(() {
+      _binary = "";
+      _decimal = "";
+    });
+  }
+
+  Widget getCustomContainer() {
+    switch (selectedWidgetMarker) {
+      case WidgetMarker.binary:
+        return BinaryWidget(
+          context: context,
+          numberChange: (int number) {
+            _binToDec(number);
+          },
+        );
+      case WidgetMarker.decimal:
+        return DecimalWidget(
+            context: context,
+            numberChange: (int number) {
+              _decToBin(number);
+            });
+      default:
+        return BinaryWidget(
+          context: context,
+          numberChange: (int number) {
+            _binToDec(number);
+          },
+        );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <
-          Widget>[
-        Container(
-            alignment: Alignment.centerLeft, child: Text("Binary -> Decimal")),
-        Container(
-            padding: const EdgeInsets.all(8.0),
-            alignment: Alignment.centerRight,
-            child: Text(
-              '$_binary',
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Color(int.parse("#FF5722".replaceAll('#', '0xff'))),
-                  fontSize: 35),
-            )),
-        Container(
-          padding: const EdgeInsets.all(8.0),
-          alignment: Alignment.centerRight,
-          child: Text(
-            '$_decimal',
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Color(int.parse("#FF5722".replaceAll('#', '0xff'))),
-                fontSize: 35),
-          ),
-        ),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: <Widget>[
-          Expanded(
-            flex: 4,
-            child: MaterialButton(
-              color: Colors.blue,
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "1",
-                style: TextStyle(fontSize: 26.0, color: Colors.white),
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.all(8.0),
+                child: FlatButton(
+                  child: Text("$text",
+                      style: TextStyle(color: Theme.of(context).accentColor)),
+                  onPressed: () {
+                    setState(() {
+                      switch (selectedWidgetMarker) {
+                        case WidgetMarker.binary:
+                          text = "Decimal -> Binary";
+                          selectedWidgetMarker = WidgetMarker.decimal;
+                          break;
+                        case WidgetMarker.decimal:
+                          text = "Binary -> Decimal";
+                          selectedWidgetMarker = WidgetMarker.binary;
+                          break;
+                      }
+                    });
+                  },
+                )),
+            Container(
+                padding: const EdgeInsets.all(8.0),
+                alignment: Alignment.centerRight,
+                child: Text(
+                  '$_binary',
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).accentColor,
+                      fontSize: 35),
+                )),
+            Container(
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.all(8.0),
+                child: Text('$_decimal',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).accentColor,
+                        fontSize: 35))),
+            Expanded(
+              flex: 3,
+              child: SizedBox(
+                height: double.infinity,
+                child: getCustomContainer(),
               ),
-              onPressed: () {
-                _onPressed(1);
-              },
             ),
-          ),
-          Spacer(),
-          Expanded(
-            flex: 4,
-            child: MaterialButton(
-              color: Colors.blue,
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "0",
-                style: TextStyle(fontSize: 26.0, color: Colors.white),
+            Expanded(
+              flex: 1,
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: MaterialButton(
+                    color: Theme.of(context).accentColor,
+                    onPressed: () {
+                      _clear();
+                    },
+                    child: Text("Reset",
+                        style: new TextStyle(
+                          fontSize: 20.0,
+                          color: Colors.white,
+                        ))),
               ),
-              onPressed: () {
-                _onPressed(0);
-              },
             ),
-          ),
-        ]),
-        Expanded(
-          flex: 1,
-          child: Container(
-            padding: const EdgeInsets.all(8.0),
-            child: MaterialButton(
-                color: Color(int.parse("#0069C0".replaceAll('#', '0xff'))),
-                onPressed: () {
-                  _onPressed(2);
-                },
-                child: Text("Reset",
-                    style: new TextStyle(
-                      fontSize: 20.0,
-                      color: Colors.white,
-                    ))),
-          ),
-        ),
-      ]),
+          ]),
     );
   }
 }
