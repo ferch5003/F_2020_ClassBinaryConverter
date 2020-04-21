@@ -8,8 +8,8 @@ class MyHome extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Class demo Converter',
         theme: ThemeData(
-           primaryColor: Colors.purple,
-           accentColor: Colors.purpleAccent,
+           primaryColor: Colors.green,
+           accentColor: Colors.lightBlue,
         ),
         home: Scaffold(
             appBar: AppBar(

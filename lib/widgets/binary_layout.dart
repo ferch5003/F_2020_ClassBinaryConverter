@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:demo_app/widgets/button.dart';
 
 class BinaryWidget extends StatelessWidget {
-  final BuildContext context;
   final Function(int) numberChange;
 
-  BinaryWidget({key, this.context, this.numberChange}) : super(key: key);
+  BinaryWidget({key, this.numberChange}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

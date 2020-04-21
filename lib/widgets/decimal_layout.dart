@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:demo_app/widgets/button.dart';
 
 class DecimalWidget extends StatelessWidget {
-  final BuildContext context;
   final Function(int) numberChange;
 
-  DecimalWidget({key, this.context, this.numberChange}) : super(key: key);
+  DecimalWidget({key, this.numberChange}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
